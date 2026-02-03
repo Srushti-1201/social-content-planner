@@ -6,9 +6,16 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-fallback-key-for-dev-only')
-DEBUG = config('DEBUG', default=True, cast=bool)
 
-if DEBUG:
+# Get DEBUG from environment - handle string values properly
+DEBUG_ENV = os.getenv('DEBUG', 'True')
+DEBUG = DEBUG_ENV.lower() not in ('false', '0', 'no')
+
+# Get ALLOWED_HOSTS from environment or use defaults
+ALLOWED_HOSTS_ENV = os.getenv('ALLOWED_HOSTS', '')
+if ALLOWED_HOSTS_ENV:
+    ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_ENV.split(',')]
+elif DEBUG:
     ALLOWED_HOSTS = ["*"]
 else:
     ALLOWED_HOSTS = [".onrender.com"]

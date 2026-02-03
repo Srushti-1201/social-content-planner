@@ -2,14 +2,16 @@ services:
   - type: web
     name: srushti-backend
     env: python
-    rootDir: backend
+    rootDir: .
     buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
-    startCommand: "gunicorn config.wsgi:application"
+    startCommand: "gunicorn content_planner.wsgi:application"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
       - key: DEBUG
         value: False
+      - key: ALLOWED_HOSTS
+        value: .onrender.com
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_URL

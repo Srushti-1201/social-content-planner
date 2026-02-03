@@ -107,22 +107,21 @@ class RandomQuoteView(APIView):
                 import random
                 return Response(random.choice(quotes))
 
-@api_view(['POST', 'GET'])
+@api_view(['GET', 'POST'])
 def post_list_create(request):
     # Handle the "CREATE" button click
     if request.method == 'POST':
-        data = request.data.copy()
-        data.pop("scheduled_time", None)
-        serializer = SocialPostSerializer(data=data)
+        serializer = SocialPostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # If validation fails, this prints why in your terminal
-        print("Validation Error:", serializer.errors) 
+
+        # If it fails, print the error to your terminal so you can see it!
+        print("❌ Validation Error:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Handle listing posts (for the dashboard)
+    # Handle listing posts (for the Dashboard)
     elif request.method == 'GET':
-        posts = SocialPost.objects.all()
+        posts = SocialPost.objects.all().order_by('-created_at')
         serializer = SocialPostSerializer(posts, many=True)
         return Response(serializer.data)

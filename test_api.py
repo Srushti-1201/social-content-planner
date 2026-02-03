@@ -4,8 +4,8 @@ url = 'http://127.0.0.1:8000/api/posts/'
 data = {
     "title": "Test Post",
     "content": "This is a test",
-    "platform": "facebook",
-    "status": "draft"
+    "platform": "Facebook",
+    "status": "Draft"
 }
 
 response = requests.post(url, json=data)

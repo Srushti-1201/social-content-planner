@@ -13,7 +13,7 @@ print("POST with scheduled_time:")
 data = {
     "title": "Test Post with scheduled_time",
     "content": "Content here",
-    "platform": "facebook",
+    "platform": "Facebook",
     "scheduled_time": "2023-12-01T10:00:00Z"
 }
 response = requests.post(base_url, json=data)
@@ -26,7 +26,7 @@ print("POST without scheduled_time:")
 data2 = {
     "title": "Test Post no scheduled_time",
     "content": "Content here 2",
-    "platform": "twitter"
+    "platform": "Twitter"
 }
 response = requests.post(base_url, json=data2)
 print(f"Status: {response.status_code}")
@@ -37,7 +37,7 @@ print()
 print("POST invalid (missing title):")
 data3 = {
     "content": "Content here 3",
-    "platform": "linkedin"
+    "platform": "LinkedIn"
 }
 response = requests.post(base_url, json=data3)
 print(f"Status: {response.status_code}")

@@ -10,6 +10,7 @@ from decouple import config
 from rest_framework import status
 from rest_framework.decorators import api_view
 from .logger import setup_logger
+from django.shortcuts import render
 
 logger = setup_logger()
 
@@ -125,3 +126,6 @@ def post_list_create(request):
         posts = SocialPost.objects.all().order_by('-created_at')
         serializer = SocialPostSerializer(posts, many=True)
         return Response(serializer.data)
+
+def dashboard(request):
+    return render(request, "dashboard.html")

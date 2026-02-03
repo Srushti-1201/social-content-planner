@@ -2,9 +2,9 @@ services:
   - type: web
     name: srushti-backend
     env: python
-    rootDir: .
+    rootDir: backend
     buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
-    startCommand: "gunicorn content_planner.wsgi:application"
+    startCommand: "gunicorn config.wsgi:application"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0

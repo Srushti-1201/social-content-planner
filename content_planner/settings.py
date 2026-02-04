@@ -11,14 +11,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-fallback-key-for-dev-
 DEBUG_ENV = os.getenv('DEBUG', 'True')
 DEBUG = DEBUG_ENV.lower() not in ('false', '0', 'no')
 
-# Get ALLOWED_HOSTS from environment or use defaults
-ALLOWED_HOSTS_ENV = os.getenv('ALLOWED_HOSTS', '')
-if ALLOWED_HOSTS_ENV:
-    ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_ENV.split(',')]
-elif DEBUG:
-    ALLOWED_HOSTS = ["*"]
-else:
-    ALLOWED_HOSTS = [".onrender.com"]
+ALLOWED_HOSTS = ["*", ".onrender.com"]
 
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

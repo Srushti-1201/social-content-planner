@@ -3,7 +3,7 @@ import {
   Container, Paper, TextField, Button, MenuItem, Box,
   Typography, Grid, CircularProgress, Alert
 } from '@mui/material';
-import { CloudUpload, AutoAwesome } from '@mui/icons-material';
+import { CloudUpload, AutoAwesome, TrendingUp } from '@mui/icons-material';
 import { postsAPI } from '../services/api';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -13,6 +13,7 @@ const PostForm = () => {
   const [loading, setLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
   const [quoteLoading, setQuoteLoading] = useState(false);
+  const [engagementLoading, setEngagementLoading] = useState(false);
   const [error, setError] = useState('');
   
   const [formData, setFormData] = useState({
@@ -47,6 +48,19 @@ const PostForm = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleGenerateEngagement = () => {
+    setEngagementLoading(true);
+    // Simulate API call delay
+    setTimeout(() => {
+      const randomScore = Math.floor(Math.random() * 1000) + 1;
+      setFormData({
+        ...formData,
+        engagement_score: randomScore,
+      });
+      setEngagementLoading(false);
+    }, 500);
   };
 
   const handleFetchImage = async () => {
@@ -179,14 +193,25 @@ const PostForm = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Engagement Score"
-                name="engagement_score"
-                type="number"
-                value={formData.engagement_score}
-                onChange={handleChange}
-              />
+              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                <TextField
+                  fullWidth
+                  label="Engagement Score"
+                  name="engagement_score"
+                  type="number"
+                  value={formData.engagement_score}
+                  onChange={handleChange}
+                  inputProps={{ min: 0 }}
+                />
+                <Button
+                  variant="outlined"
+                  startIcon={engagementLoading ? <CircularProgress size={20} /> : <TrendingUp />}
+                  onClick={handleGenerateEngagement}
+                  disabled={engagementLoading}
+                >
+                  Generate
+                </Button>
+              </Box>
             </Grid>
 
             <Grid item xs={12}>

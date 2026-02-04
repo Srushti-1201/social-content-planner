@@ -6,18 +6,37 @@ import axios from "axios";
 export default function CreatePost() {
   const [formData, setFormData] = useState({
     title: '',
-    platform: 'instagram',
     content: '',
-    status: 'draft'
+    platform: 'facebook',
+    status: 'draft',
   });
+  const [scheduledTime, setScheduledTime] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [engagementScore, setEngagementScore] = useState(0);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const platforms = [
+    { value: "facebook", label: "Facebook" },
+    { value: "instagram", label: "Instagram" },
+    { value: "twitter", label: "Twitter" },
+    { value: "linkedin", label: "LinkedIn" },
+    { value: "tiktok", label: "TikTok" },
+    { value: "youtube", label: "YouTube" },
+    { value: "pinterest", label: "Pinterest" },
+  ];
+
+  const statuses = [
+    { value: "draft", label: "Draft" },
+    { value: "scheduled", label: "Scheduled" },
+    { value: "published", label: "Published" },
+    { value: "archived", label: "Archived" },
+  ];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("SUBMIT CLICKED"); // 👈 add this
     if (!formData.title || !formData.content) {
       setError("Title and content are required");
       return;
@@ -25,7 +44,15 @@ export default function CreatePost() {
     setError("");
     setSaving(true);
     try {
-      await createPost(formData);
+      await createPost({
+        title: formData.title,
+        content: formData.content,
+        platform: formData.platform,
+        status: formData.status,
+        scheduled_time: scheduledTime || null,
+        image_url: imageUrl || "",
+        engagement_score: engagementScore || 0,
+      });
       navigate("/");
     } catch (err) {
       console.error("STATUS:", err.response?.status);
@@ -61,22 +88,38 @@ export default function CreatePost() {
           onChange={(e) => setFormData({...formData, title: e.target.value})}
           className="border p-2 w-full rounded"
         />
+        
         <select
           value={formData.platform}
           onChange={(e) => setFormData({...formData, platform: e.target.value})}
           className="border p-2 w-full rounded"
         >
-          <option value="instagram">Instagram</option>
-          <option value="facebook">Facebook</option>
-          <option value="linkedin">LinkedIn</option>
-          <option value="twitter">Twitter</option>
+          {platforms.map((platform) => (
+            <option key={platform.value} value={platform.value}>
+              {platform.label}
+            </option>
+          ))}
         </select>
+        
+        <select
+          value={formData.status}
+          onChange={(e) => setFormData({...formData, status: e.target.value})}
+          className="border p-2 w-full rounded"
+        >
+          {statuses.map((status) => (
+            <option key={status.value} value={status.value}>
+              {status.label}
+            </option>
+          ))}
+        </select>
+        
         <textarea
           placeholder="Content"
           value={formData.content}
           onChange={(e) => setFormData({...formData, content: e.target.value})}
           className="border p-2 w-full rounded h-32"
         />
+        
         <div className="flex gap-2 items-center">
           <button
             type="button"
@@ -88,6 +131,32 @@ export default function CreatePost() {
           </button>
           <small className="text-gray-500">Powered by Quotable API</small>
         </div>
+        
+        <input
+          type="datetime-local"
+          value={scheduledTime}
+          onChange={(e) => setScheduledTime(e.target.value)}
+          className="border p-2 w-full rounded"
+        />
+        
+        <input
+          type="url"
+          placeholder="Image URL (optional)"
+          value={imageUrl}
+          onChange={(e) => setImageUrl(e.target.value)}
+          className="border p-2 w-full rounded"
+        />
+        
+        <input
+          type="number"
+          placeholder="Engagement Score (optional)"
+          value={engagementScore}
+          onChange={(e) => setEngagementScore(parseInt(e.target.value) || 0)}
+          min="0"
+          max="100"
+          className="border p-2 w-full rounded"
+        />
+        
         {error && <p className="text-red-500">{error}</p>}
         <div className="flex gap-2">
           <button 

@@ -10,8 +10,9 @@ from decouple import config
 from rest_framework import status
 from rest_framework.decorators import api_view
 from .logger import setup_logger
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import SocialPost as Post
+from .forms import SocialPostForm
 
 logger = setup_logger()
 
@@ -175,6 +176,17 @@ from django.http import JsonResponse
 
 def health(request):
     return JsonResponse({"status": "ok"})
+
+def create_post(request):
+    if request.method == "POST":
+        form = SocialPostForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("/")
+    else:
+        form = SocialPostForm()
+
+    return render(request, "content_posts/create_post.html", {"form": form})
 
 def post_list(request):
     """

@@ -1,7 +1,10 @@
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from django.db.models import Count, Avg, Sum
+from django.db import transaction
+import requests
+import random
 from .models import Post
 from .serializers import PostSerializer
 
@@ -41,3 +44,58 @@ class PostViewSet(viewsets.ModelViewSet):
             'author': 'Placeholder',
             'description': 'Random image'
         })
+
+    @action(detail=False, methods=['post'])
+    def generate_engagement(self, request):
+        """Generate random engagement scores for all posts"""
+        try:
+            with transaction.atomic():
+                posts = Post.objects.all()
+                updated_count = 0
+                for post in posts:
+                    # Generate random engagement score based on platform
+                    platform_multipliers = {
+                        'Facebook': 1.0,
+                        'Instagram': 1.5,
+                        'Twitter': 0.8,
+                        'LinkedIn': 1.2,
+                    }
+                    multiplier = platform_multipliers.get(post.platform, 1.0)
+                    score = int(random.randint(100, 1000) * multiplier)
+                    post.engagement_score = score
+                    post.save(update_fields=['engagement_score'])
+                    updated_count += 1
+                
+            return Response({
+                'success': True,
+                'message': f'Generated engagement scores for {updated_count} posts',
+                'updated_count': updated_count
+            })
+        except Exception as e:
+            return Response({
+                'success': False,
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["GET"])
+def random_quote(request):
+    # Fallback quotes in case external API fails
+    FALLBACK_QUOTES = [
+        {"content": "The only way to do great work is to love what you do.", "author": "Steve Jobs"},
+        {"content": "Life is what happens when you're busy making other plans.", "author": "John Lennon"},
+        {"content": "The future belongs to those who believe in the beauty of their dreams.", "author": "Eleanor Roosevelt"},
+        {"content": "It does not matter how slowly you go as long as you do not stop.", "author": "Confucius"},
+        {"content": "In the end, it's not the years in your life that count. It's the life in your years.", "author": "Abraham Lincoln"}
+    ]
+    
+    try:
+        r = requests.get("https://api.quotable.io/random", timeout=5)
+        if r.status_code == 200:
+            return Response(r.json())
+    except Exception:
+        pass
+    
+    # Return a fallback quote if the external API fails
+    import random
+    return Response(random.choice(FALLBACK_QUOTES))

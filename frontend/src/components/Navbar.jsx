@@ -1,5 +1,5 @@
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
-import { Dashboard, List } from '@mui/icons-material';
+import { Dashboard, List, BarChart } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
@@ -17,6 +17,9 @@ const Navbar = () => {
           </Button>
           <Button color="inherit" startIcon={<List />} onClick={() => navigate('/')}>
             Posts
+          </Button>
+          <Button color="inherit" startIcon={<BarChart />} onClick={() => navigate('/reports')}>
+            Reports
           </Button>
         </Box>
       </Toolbar>

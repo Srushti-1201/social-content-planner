@@ -26,6 +26,25 @@ def post_stats(request):
     }
     return Response(stats)
 
+@api_view(['GET'])
+def dashboard_stats(request):
+    """
+    Provides statistics for the dashboard (total, published, drafts, and by platform).
+    """
+    platform_stats_query = SocialPost.objects.values('platform').annotate(count=Count('id')).order_by('-count')
+
+    agg_stats = SocialPost.objects.aggregate(
+        total_posts=Count('id'),
+        published=Count('id', filter=Q(status='Published')),
+        drafts=Count('id', filter=Q(status='Draft'))
+    )
+
+    response_data = {
+        **agg_stats,
+        'platform_stats': list(platform_stats_query)
+    }
+    return Response(response_data)
+
 class PostViewSet(ModelViewSet):
     queryset = SocialPost.objects.all().order_by("-created_at")
     serializer_class = SocialPostSerializer

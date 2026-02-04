@@ -9,6 +9,7 @@ from .views import (
     post_list,
     PostStatsView,
     post_stats,
+    dashboard_stats,
 )
 
 router = DefaultRouter()
@@ -21,6 +22,7 @@ urlpatterns = [
     path("random_quote/", RandomQuoteView.as_view(), name="random-quote"),
     path("", post_list, name="post-list"),
     path("posts/stats/", PostStatsView.as_view(), name="post-stats"),
+    path("dashboard/stats/", dashboard_stats, name="dashboard-stats"),
     path("stats-simple/", post_stats, name="post-stats-simple"),
     path("", include(router.urls)),
 ]
